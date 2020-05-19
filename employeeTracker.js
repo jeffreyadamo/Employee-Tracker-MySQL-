@@ -31,7 +31,8 @@ function start(){
                 "Remove Employee",
                 "Update Employee Role",
                 "Update Employee Manager",
-                "View All Roles"
+                "View All Roles",
+                "Quit"
             ]
         }
     ])
@@ -53,11 +54,10 @@ function start(){
               return updateEmployeeRole();
             case "Update Employee Manager":
               return updateEmployeeManager();
-            case "Finished":
-               return end();
             case "View All Roles":
               return viewAllRoles();
-            
+            case "Quit":
+               return quit();
           }
           
     })
@@ -105,16 +105,16 @@ function updateEmployeeManager(){
     console.log("-------------------------------------");
     start();
 };
-function end(){
-    console.log("Goodbye")
-    console.log("-------------------------------------");
-};
 function viewAllRoles(){
     console.log("Create this function")
     console.log("-------------------------------------");
     start();
 };
-
+function quit(){
+    console.log("Goodbye")
+    console.log("-------------------------------------");
+    connection.end();
+};
 // From Homework 10: EmployeeSummary:
 // ============================================================
 // function buildEngineer() {
