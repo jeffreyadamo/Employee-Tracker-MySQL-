@@ -51,7 +51,7 @@ function start(){
         console.log("-------------------------------------");
         switch (data.nav) {
             case "View All Employees":
-              return viewAllEmployees().then(function(){start()});         
+              return viewAllEmployees();    
             case "View All Employees By Department":
               return viewEmployeeDepartment();
             case "View All Employees By Manager":
@@ -69,12 +69,10 @@ function start(){
             case "Quit":
               return quit();
           }
-          
-          
     })
-    // .then(function(){
-    //   start();
-    // })
+    .then(function(){
+      start();
+    })
     .catch(function(err) {
         console.log(err);
       });
