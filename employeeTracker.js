@@ -2,6 +2,16 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 
+const viewAllEmployees = () => require("./lib/viewAllEmployees");
+const viewEmployeeDepartment = () => require("./lib/viewEmployeeDepartment");
+const viewEmployeeManager = () => require("./lib/viewEmployeeManager");
+const addEmployee = () => require("./lib/addEmployee");
+const removeEmployee = () => require("./lib/removeEmployee");
+const updateEmployeeRole = () => require("./lib/updateEmployeeRole");
+const updateEmployeeManager = () => require("./lib/updateEmployeeManager");
+const viewAllRoles = () => require("./lib/viewAllRoles");
+
+
 const connection = mysql.createConnection({
     host: "localhost",
     port: "3306",
@@ -41,9 +51,9 @@ function start(){
         console.log("-------------------------------------");
         switch (data.nav) {
             case "View All Employees":
-              return viewAllEmployees();
+              return viewAllEmployees().then(function(){start()});         
             case "View All Employees By Department":
-              return viewEmployeeDeptartment();
+              return viewEmployeeDepartment();
             case "View All Employees By Manager":
               return viewEmployeeManager();
             case "Add Employee":
@@ -57,66 +67,62 @@ function start(){
             case "View All Roles":
               return viewAllRoles();
             case "Quit":
-               return quit();
+              return quit();
           }
           
+          
     })
+    // .then(function(){
+    //   start();
+    // })
     .catch(function(err) {
         console.log(err);
       });
 }
 
-function viewAllEmployees(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-
-function viewEmployeeDeptartment(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-
-function viewEmployeeManager(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-
-function addEmployee(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-
-function removeEmployee(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-function updateEmployeeRole(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-function updateEmployeeManager(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
-function viewAllRoles(){
-    console.log("Create this function")
-    console.log("-------------------------------------");
-    start();
-};
 function quit(){
-    console.log("Goodbye")
-    console.log("-------------------------------------");
-    connection.end();
-};
-// From Homework 10: EmployeeSummary:
-// ============================================================
+      console.log("Goodbye")
+      console.log("-------------------------------------");
+      connection.end();
+  };
+
+
+module.exports = quit();
+// function viewEmployeeManager(){
+//     console.log("Create this function")
+//     console.log("-------------------------------------");
+//     start();
+// };
+
+// function addEmployee(){
+//     console.log("Create this function")
+//     console.log("-------------------------------------");
+//     start();
+// };
+
+// function removeEmployee(){
+//     console.log("Create this function")
+//     console.log("-------------------------------------");
+//     start();
+// };
+// function updateEmployeeRole(){
+//     console.log("Create this function")
+//     console.log("-------------------------------------");
+//     start();
+// };
+// function updateEmployeeManager(){
+//     console.log("Create this function")
+//     console.log("-------------------------------------");
+//     start();
+// };
+// function viewAllRoles(){
+//     console.log("Create this function")
+//     console.log("-------------------------------------");
+//     start();
+// };
+// 
+// // From Homework 10: EmployeeSummary:
+// // ============================================================
 // function buildEngineer() {
 //     inquirer
 //       .prompt([
