@@ -18,6 +18,8 @@ INSERT INTO role (title, salary, department_id) VALUES ("Lawyer", 175000, 4);
 INSERT INTO role (title, salary, department_id) VALUES ("District Regional Manager", 180000, 5);
 INSERT INTO role (title, salary, department_id) VALUES ("Assistant to the District Regional Manager", 120000, 5);
 
+
+
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("John", "Doe", 1, 9);
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Mike", "Chan", 2, 1);
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Ashley", "Rodriguez", 3, 9);
@@ -28,19 +30,3 @@ INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Tom",
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Christian", "Eckenrode", 6, 5);
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Michael", "Scott", 9, null);
 INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("Dwight", "Schrute", 10, 9);
-
-SELECT * FROM department;
-
-/* Left join on 2 tables */
-SELECT first_name, last_name, title 
-FROM employee 
-LEFT JOIN role 
-ON employee.role_id = role.id;
-
-/* LEFT JOIN on 3 tables */
-SELECT first_name, last_name, title, name as department, salary
-FROM employee 
-LEFT JOIN role 
-ON employee.role_id = role.id 
-LEFT JOIN department 
-ON role.department_id = department.id;
