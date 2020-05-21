@@ -51,23 +51,32 @@ function start(){
         console.log("-------------------------------------");
         switch (data.nav) {
             case "View All Employees":
-              return viewAllEmployees();    
+              viewAllEmployees();
+              break;    
             case "View All Employees By Department":
-              return viewEmployeeDepartment();
+              viewEmployeeDepartment();
+              break;
             case "View All Employees By Manager":
-              return viewEmployeeManager();
+              viewEmployeeManager();
+              break;
             case "Add Employee":
-              return addEmployee();
+              addEmployee();
+              break;
             case "Remove Employee":
-              return removeEmployee();
+              removeEmployee();
+              break;
             case "Update Employee Role":
-              return updateEmployeeRole();
+              updateEmployeeRole();
+              break;
             case "Update Employee Manager":
-              return updateEmployeeManager();
+              updateEmployeeManager();
+              break;
             case "View All Roles":
-              return viewAllRoles();
+              viewAllRoles();
+              break;
             case "Quit":
-              return quit();
+              quit();
+              break;
           }
     })
     .then(function(){
@@ -85,7 +94,7 @@ function quit(){
   };
 
 
-module.exports = quit();
+module.exports = connection;
 // function viewEmployeeManager(){
 //     console.log("Create this function")
 //     console.log("-------------------------------------");
