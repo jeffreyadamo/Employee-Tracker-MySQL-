@@ -227,7 +227,7 @@ function addDepartment() {
 function viewAllEmployees() {
   console.log("Starting function viewAllEmployees");
   console.log("-------------------------------------");
-  connection.query("SELECT * FROM employee", function (err, res) {
+  connection.query("SELECT eleft.first_name, eleft.last_name, title, name as department, salary, CONCAT(eright.first_name, ' ', eright.last_name) AS manager FROM employee as eLeft LEFT JOIN role ON eleft.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee eright ON eleft.manager_id = eright.id", function (err, res) {
     if (err) throw err;
     console.table(
       "",
