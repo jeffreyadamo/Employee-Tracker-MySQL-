@@ -5,6 +5,14 @@ const inquirer = require("inquirer");
 const cTable = require("console.table");
 require("dotenv").config();
 
+// Landing Message
+// ==============================================
+console.log("")
+console.log(" ========================================")
+console.log("       WELCOME TO EMPLOYEE TRACKER")
+console.log(" ========================================")
+console.log("")
+
 // Setup Database connection
 // ==============================================
 const connection = mysql.createConnection({
@@ -17,9 +25,10 @@ const connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) throw err;
-  console.log("connected as id " + connection.threadId + "\n");
+  console.log(" User connected to employeeTracker_db as id: " + connection.threadId + "\n");
   start();
 });
+
 
 // Begin inquirer prompts
 // ==============================================
@@ -46,7 +55,6 @@ function start() {
       },
     ])
     .then(function (data) {
-      console.log("-------------------------------------");
       switch (data.nav) {
         case "View All Employees":
           viewAllEmployees();
