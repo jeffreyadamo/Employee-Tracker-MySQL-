@@ -120,12 +120,18 @@ function addRole() {
   console.log("-------------------------------------");
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
-    console.log("results : ", res);
+    // console.log("results : ", res);
 
+    // This maps the results to into a new object where id's are assigned as values that can be used to match up with the inquirer choices. This can be used to generate choices from the database instead of having an array variable that we push into then use in inquirer. 
     const myDeps = res.map(function (deps) {
-      return { name: deps.name, value: deps.id };
+      return { 
+        name: deps.name,
+        value: deps.id 
+      };
     });
-    console.log(myDeps);
+
+    // Should return the name field and value will be the name's id. 
+    // console.table(myDeps);
 
     inquirer
       .prompt([
@@ -133,20 +139,20 @@ function addRole() {
         {
           type: "input",
           name: "title",
-          message: "What is the new role's title?",
+          message: "What is the new role's title?"
         },
 
         {
           type: "input",
           name: "salary",
-          message: "What is the new role's salary?",
+          message: "What is the new role's salary?"
         },
         {
           type: "list",
           name: "department",
           message: "What is the new role's department?",
-          choices: myDeps,
-        },
+          choices: myDeps
+        }
       ])
       .then(function (data) {
         // console.log(
@@ -273,8 +279,43 @@ function viewAllDepartments() {
 }
 
 function viewEmployeeDepartment() {
-  console.log("Create this function");
+  console.log("Starting function viewEmployeeDepartment");
   console.log("-------------------------------------");
+  connection.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
+
+    const myDeps = res.map(function (deps) {
+      return { 
+        name: deps.name,
+        value: deps.id 
+      };
+    });
+
+    inquirer
+      .prompt([
+        //List current department options
+        {
+          type: "list",
+          name: "department",
+          message: "Select a department to view its employees:",
+          choices: myDeps
+        }
+      ])
+      .then(function (data) {
+        connection.query("SELECT eleft.first_name, eleft.last_name, title, name as department, salary, CONCAT(eright.first_name, ' ', eright.last_name) AS manager FROM employee as eLeft LEFT JOIN role ON eleft.role_id = role.id LEFT JOIN department ON role.department_id = department.id RIGHT JOIN employee eright ON eleft.manager_id = eright.id WHERE department.id="+data.department+"", function (err, res) {
+          if (err) throw err;
+          console.table(
+            "",
+            "-------------------------------------",
+            "All Employees in the " + myDeps[data.department-1].name + " department:",
+            "-------------------------------------",
+            res
+          );
+          start();
+        });
+      })
+    })
+ 
 }
 
 // function viewEmployeeManager(){
