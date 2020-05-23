@@ -436,6 +436,62 @@ function viewEmployeeDepartment() {
 function updateEmployeeRole() {
   console.log("Create this function");
   console.log("-------------------------------------");
+  connection.query("SELECT id,CONCAT(first_name, ' ', last_name) AS emp FROM employee", function(err, res){
+    if (err) throw err;
+
+    const empUpdate = res.map(function(empData){
+      return {
+        name: empData.emp,
+        value: empData.id
+      }
+    })
+   inquirer
+    .prompt([
+      //List current department options
+      {
+        type: "list",
+        name: "employee",
+        message: "Which employee's role would you like to change?:",
+        choices: empUpdate
+      }
+    ]).then(function(data){
+      console.log(data);
+      // console.log(newEmp);
+      const empUpdate = data.employee;
+
+      connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+
+        const myRole = res.map(function (roles) {
+          return { 
+            name: roles.title,
+            value: roles.id 
+          };
+        });
+
+        inquirer
+          .prompt([
+            //List current department options
+            {
+              type: "list",
+              name: "roles",
+              message: "Select a role:",
+              choices: myRole
+            }
+          ]).then(function(data){
+            connection.query(
+              "UPDATE employee SET role_id= "+data.roles+" WHERE id="+empUpdate+"",
+               function(err, res)
+              {
+              if (err) throw err;
+              viewAllEmployees();
+              }
+            )
+          })
+        })
+    })
+  })
+
 }
 // DELETE
 // ========================================================
