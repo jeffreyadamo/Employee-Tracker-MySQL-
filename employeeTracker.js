@@ -155,43 +155,7 @@ function addRole() {
         }
       ])
       .then(function (data) {
-        // console.log(
-        //   "User creates role: " +
-        //     data.title +
-        //     " with a salary of " +
-        //     data.salary +
-        //     " in the " +
-        //     data.department +
-        //     " department."
-        // );
-        // switch (data.department) {
-        //   case "Sales":
-        //     data.department = 1;
-        //     break;
-        //   case "Engineering":
-        //     data.department = 2;
-        //     break;
-        //   case "Finance":
-        //     data.department = 3;
-        //     break;
-        //   case "Legal":
-        //     data.department = 4;
-        //     break;
-        //   case "Management":
-        //     data.department = 5;
-        //     break;
-        // }
-        // console.log(
-        //   "User creates role: " +
-        //     data.title +
-        //     " with a salary of " +
-        //     data.salary +
-        //     " in the " +
-        //     data.department +
-        //     " department."
-        // );
-        connection.query(
-          "INSERT INTO role SET ?",
+        connection.query("INSERT INTO role SET ?",
           {
             title: data.title,
             salary: data.salary,
@@ -199,7 +163,7 @@ function addRole() {
           },
           function (err, res) {
             if (err) throw err;
-            start();
+            viewAllRoles
           }
         );
       });
@@ -207,8 +171,22 @@ function addRole() {
 }
 
 function addDepartment() {
-  console.log("Starting funciton addDepartment");
+  console.log("Starting function addDepartment");
   console.log("-------------------------------------");
+  connection.query("SELECT * FROM department", function (err, res) {
+    if (err) throw err;
+    const myDeps = res.map(function (deps) {
+      return { 
+        name: deps.name,
+        value: deps.id 
+      };
+    });
+
+
+
+
+
+
   inquirer
     .prompt([
       //List navigation options
@@ -219,12 +197,24 @@ function addDepartment() {
       },
     ])
     .then(function (data) {
-      console.log("User created the " + data.department + " department");
-      departments.push(data.department);
-      console.table(departments);
-      viewAllDepartments();
-      start();
-    });
+      connection.query(
+        "INSERT INTO department SET ?",
+        {
+          name: data.department
+        }
+      ,
+      function(err, res){
+        if (err) throw err;
+        viewAllDepartments();
+        // start();
+      }
+      )
+      
+      
+    })
+ 
+
+  })
 }
 
 // READ
