@@ -109,7 +109,7 @@ function start() {
 // ========================================================
 
 function addEmployee() {
-  console.log("Create this function");
+  console.log("Starting function addEmployee");
   console.log("-------------------------------------");
 
   connection.query("SELECT * FROM department", function (err, res) {
@@ -121,12 +121,6 @@ function addEmployee() {
         value: deps.id 
       };
     });
-    // const myRoles = res.map(function (roles) {
-    //   return { 
-    //     name: roles.title,
-    //     value: roles.roleid 
-    //   };
-    // });
 
     inquirer
       .prompt([
@@ -142,16 +136,10 @@ function addEmployee() {
           name: "last_name",
           message: "What is the employee's last name?"
         },
-        // {
-        //   type: "list",
-        //   name: "title",
-        //   message: "What is the new employee's role?",
-        //   choices: myRoles
-        // },
         {
           type: "list",
           name: "department",
-          message: "What is the new role's department?",
+          message: "What is the new employee's department?",
           choices: myDeps
         }
       ])
@@ -182,53 +170,57 @@ function addEmployee() {
               }
             ])
             .then(function(data){
-              console.log(data)
-              console.log(newEmp)
-
-              connection.query(
-                "INSERT INTO employee SET ?",
-                {
-                  first_name: newEmp.first_name,
-                  last_name: newEmp.last_name,
-                  role_id: data.roles
-
-                }
-              ,
-              function(err, res){
+              console.log(data);
+              console.log(newEmp);
+              const newRole = data.roles;
+              
+              connection.query("SELECT id,CONCAT(first_name, ' ', last_name) AS manager FROM employee", function(err, res){
                 if (err) throw err;
-                viewAllEmployees();
-                // start();
-              }
-              )
+
+                const myMan = res.map(function(man){
+                  return {
+                    name: man.manager,
+                    value: man.id
+                  }
+                })
+               inquirer
+                .prompt([
+                  //List current department options
+                  {
+                    type: "list",
+                    name: "manager",
+                    message: "Select a Manager for the employee:",
+                    choices: myMan
+                  }
+                ]).then(function(data){
+                  console.log(data);
+                  console.log(newEmp);
+                  // const newRole = data.roles;
+                  connection.query(
+                    "INSERT INTO employee SET ?",
+                    {
+                      first_name: newEmp.first_name,
+                      last_name: newEmp.last_name,
+                      role_id: newRole,
+                      manager_id: data.manager
+
+                    }
+                  , function(err, res)
+                    {
+                    if (err) throw err;
+                    viewAllEmployees();
+                    }
+                  )
+                })
+              })
+
+              
             })
 
         })
 
       
       })
-        // const newEmp = data.map(function(part1){
-        //   return {
-        //     first_name: part1.first_name,
-        //     last_name: part1.last_name,
-        //     department: part1.department
-        //   }        
-        // })
-        // const newEmp = data.map(data1);
-        // console.table(newEmp);
-        // connection.query("INSERT INTO role SET ?",
-        //   {
-        //     title: data.title,
-        //     salary: data.salary,
-        //     department_id: data.department,
-        //   },
-        //   function (err, res) {
-        //     if (err) throw err;
-        //     viewAllRoles
-        //   }
-        // );
-
-
-
   });
 
 }
