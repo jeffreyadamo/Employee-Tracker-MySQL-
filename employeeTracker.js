@@ -111,9 +111,71 @@ function start() {
 function addEmployee() {
   console.log("Create this function");
   console.log("-------------------------------------");
+
+  connection.query("SELECT department.id as deptid, department.name, role.id as roleid, role.department_id, title FROM department LEFT JOIN role ON department.id = role.department_id;", function (err, res) {
+    if (err) throw err;
+
+    const myDeps = res.map(function (deps) {
+      return { 
+        name: deps.name,
+        value: deps.deptid 
+      };
+    });
+    const myRoles = res.map(function (roles) {
+      return { 
+        name: roles.title,
+        value: roles.roleid 
+      };
+    });
+
+    inquirer
+      .prompt([
+        //List navigation options
+        {
+          type: "input",
+          name: "first_name",
+          message: "What is the employee's first name?"
+        },
+
+        {
+          type: "input",
+          name: "last_name",
+          message: "What is the employee's last name?"
+        },
+        {
+          type: "list",
+          name: "title",
+          message: "What is the new employee's role?",
+          choices: myRoles
+        },
+        {
+          type: "list",
+          name: "department",
+          message: "What is the new role's department?",
+          choices: myDeps
+        }
+      ])
+      .then(function (data) {
+        console.table(data)
+        // connection.query("INSERT INTO role SET ?",
+        //   {
+        //     title: data.title,
+        //     salary: data.salary,
+        //     department_id: data.department,
+        //   },
+        //   function (err, res) {
+        //     if (err) throw err;
+        //     viewAllRoles
+        //   }
+        // );
+      });
+
+
+  });
+
 }
 
-var departments = ["Sales", "Engineering", "Finance", "Legal", "Management"];
+
 
 function addRole() {
   console.log("Starting function addRole");
