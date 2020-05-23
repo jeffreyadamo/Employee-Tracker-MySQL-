@@ -1,21 +1,14 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
+require("dotenv").config();
 
-// const viewAllEmployees = () => require("./lib/viewAllEmployees");
-// const viewEmployeeDepartment = () => require("./lib/viewEmployeeDepartment");
-// const viewEmployeeManager = () => require("./lib/viewEmployeeManager");
-// const addEmployee = () => require("./lib/addEmployee");
-// const removeEmployee = () => require("./lib/removeEmployee");
-// const updateEmployeeRole = () => require("./lib/updateEmployeeRole");
-// const updateEmployeeManager = () => require("./lib/updateEmployeeManager");
-// const viewAllRoles = () => require("./lib/viewAllRoles");
 
 const connection = mysql.createConnection({
   host: "localhost",
   port: "3306",
   user: "root",
-  password: "Adamologics#1",
+  password: process.env.MYSQL_PASSWORD,
   database: "employeeTracker_db",
 });
 
@@ -275,7 +268,7 @@ function addRole() {
           },
           function (err, res) {
             if (err) throw err;
-            viewAllRoles
+            viewAllRoles()
           }
         );
       });
@@ -351,7 +344,7 @@ function viewAllEmployees() {
 function viewAllRoles() {
   console.log("Starting function viewAllRoles");
   console.log("-------------------------------------");
-  connection.query("SELECT * FROM role", function (err, res) {
+  connection.query("SELECT role.id, title, salary, name as department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
     if (err) throw err;
     console.table(
       "",
