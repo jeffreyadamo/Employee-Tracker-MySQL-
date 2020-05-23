@@ -112,21 +112,21 @@ function addEmployee() {
   console.log("Create this function");
   console.log("-------------------------------------");
 
-  connection.query("SELECT department.id as deptid, department.name, role.id as roleid, role.department_id, title FROM department LEFT JOIN role ON department.id = role.department_id;", function (err, res) {
+  connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
 
     const myDeps = res.map(function (deps) {
       return { 
         name: deps.name,
-        value: deps.deptid 
+        value: deps.id 
       };
     });
-    const myRoles = res.map(function (roles) {
-      return { 
-        name: roles.title,
-        value: roles.roleid 
-      };
-    });
+    // const myRoles = res.map(function (roles) {
+    //   return { 
+    //     name: roles.title,
+    //     value: roles.roleid 
+    //   };
+    // });
 
     inquirer
       .prompt([
@@ -142,12 +142,12 @@ function addEmployee() {
           name: "last_name",
           message: "What is the employee's last name?"
         },
-        {
-          type: "list",
-          name: "title",
-          message: "What is the new employee's role?",
-          choices: myRoles
-        },
+        // {
+        //   type: "list",
+        //   name: "title",
+        //   message: "What is the new employee's role?",
+        //   choices: myRoles
+        // },
         {
           type: "list",
           name: "department",
@@ -156,7 +156,65 @@ function addEmployee() {
         }
       ])
       .then(function (data) {
-        console.table(data)
+        console.log(data.department)
+
+        const newEmp = data;
+        console.log(newEmp.department);
+
+        connection.query("SELECT * FROM role WHERE department_id ="+newEmp.department+"", function (err, res) {
+          if (err) throw err;
+
+          const myRole = res.map(function (roles) {
+            return { 
+              name: roles.title,
+              value: roles.id 
+            };
+          });
+
+          inquirer
+            .prompt([
+              //List current department options
+              {
+                type: "list",
+                name: "roles",
+                message: "Select a role:",
+                choices: myRole
+              }
+            ])
+            .then(function(data){
+              console.log(data)
+              console.log(newEmp)
+
+              connection.query(
+                "INSERT INTO employee SET ?",
+                {
+                  first_name: newEmp.first_name,
+                  last_name: newEmp.last_name,
+                  role_id: data.roles
+
+                }
+              ,
+              function(err, res){
+                if (err) throw err;
+                viewAllEmployees();
+                // start();
+              }
+              )
+            })
+
+        })
+
+      
+      })
+        // const newEmp = data.map(function(part1){
+        //   return {
+        //     first_name: part1.first_name,
+        //     last_name: part1.last_name,
+        //     department: part1.department
+        //   }        
+        // })
+        // const newEmp = data.map(data1);
+        // console.table(newEmp);
         // connection.query("INSERT INTO role SET ?",
         //   {
         //     title: data.title,
@@ -168,7 +226,7 @@ function addEmployee() {
         //     viewAllRoles
         //   }
         // );
-      });
+
 
 
   });
