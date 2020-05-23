@@ -1,9 +1,12 @@
+// Set Dependencies
+// ==============================================
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const cTable = require("console.table");
 require("dotenv").config();
 
-
+// Setup Database connection
+// ==============================================
 const connection = mysql.createConnection({
   host: "localhost",
   port: "3306",
@@ -18,6 +21,8 @@ connection.connect(function (err) {
   start();
 });
 
+// Begin inquirer prompts
+// ==============================================
 function start() {
   console.log("");
   inquirer
@@ -32,19 +37,15 @@ function start() {
           "View All Roles",
           "View All Departments",
           "View All Employees By Department",
-          // "View All Employees By Manager", BONUS
           "Add Employee",
           "Add Department",
           "Add Role",
-          // "Remove Employee", BONUS
           "Update Employee Role",
-          // "Update Employee Manager", BONUS
           "Quit",
         ],
       },
     ])
     .then(function (data) {
-      console.log("User had chosen to: " + data.nav);
       console.log("-------------------------------------");
       switch (data.nav) {
         case "View All Employees":
@@ -59,9 +60,6 @@ function start() {
         case "View All Employees By Department":
           viewEmployeeDepartment();
           break;
-        // case "View All Employees By Manager":
-        //   viewEmployeeManager();
-        //   break;
         case "Add Employee":
           addEmployee();
           break;
@@ -71,25 +69,14 @@ function start() {
         case "Add Role":
           addRole();
           break;
-        // case "Remove Employee":
-        //   removeEmployee();
-        //   break;
         case "Update Employee Role":
           updateEmployeeRole();
           break;
-        // case "Update Employee Manager":
-        //   updateEmployeeManager();
-        //   break;
-
         case "Quit":
           quit();
           break;
       }
     })
-    // .then(function(){
-
-    //   start();
-    // })
     .catch(function (err) {
       console.log(err);
     });
@@ -102,12 +89,11 @@ function start() {
 // ========================================================
 
 function addEmployee() {
-  console.log("Starting function addEmployee");
   console.log("-------------------------------------");
-
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
 
+    // Use result to setup an object for the inquirer's department choices
     const myDeps = res.map(function (deps) {
       return { 
         name: deps.name,
@@ -117,13 +103,11 @@ function addEmployee() {
 
     inquirer
       .prompt([
-        //List navigation options
         {
           type: "input",
           name: "first_name",
           message: "What is the employee's first name?"
         },
-
         {
           type: "input",
           name: "last_name",
@@ -137,11 +121,8 @@ function addEmployee() {
         }
       ])
       .then(function (data) {
-        console.log(data.department)
-
         const newEmp = data;
-        console.log(newEmp.department);
-
+        // New query looks to assign the employee a role given the specified department
         connection.query("SELECT * FROM role WHERE department_id ="+newEmp.department+"", function (err, res) {
           if (err) throw err;
 
@@ -154,7 +135,6 @@ function addEmployee() {
 
           inquirer
             .prompt([
-              //List current department options
               {
                 type: "list",
                 name: "roles",
@@ -163,10 +143,8 @@ function addEmployee() {
               }
             ])
             .then(function(data){
-              console.log(data);
-              console.log(newEmp);
               const newRole = data.roles;
-              
+              // Select a manager from the employee table
               connection.query("SELECT id,CONCAT(first_name, ' ', last_name) AS manager FROM employee", function(err, res){
                 if (err) throw err;
 
@@ -178,7 +156,6 @@ function addEmployee() {
                 })
                inquirer
                 .prompt([
-                  //List current department options
                   {
                     type: "list",
                     name: "manager",
@@ -186,9 +163,7 @@ function addEmployee() {
                     choices: myMan
                   }
                 ]).then(function(data){
-                  console.log(data);
-                  console.log(newEmp);
-                  // const newRole = data.roles;
+                  // Now insert the new employee into the employee table with all the gathered data
                   connection.query(
                     "INSERT INTO employee SET ?",
                     {
@@ -198,36 +173,24 @@ function addEmployee() {
                       manager_id: data.manager
 
                     }
-                  , function(err, res)
-                    {
-                    if (err) throw err;
-                    viewAllEmployees();
+                   , function(err, res) {
+                     if (err) throw err;
+                     viewAllEmployees();
                     }
                   )
                 })
               })
-
-              
             })
-
         })
-
-      
       })
   });
-
 }
 
-
-
 function addRole() {
-  console.log("Starting function addRole");
   console.log("-------------------------------------");
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
-    // console.log("results : ", res);
 
-    // This maps the results to into a new object where id's are assigned as values that can be used to match up with the inquirer choices. This can be used to generate choices from the database instead of having an array variable that we push into then use in inquirer. 
     const myDeps = res.map(function (deps) {
       return { 
         name: deps.name,
@@ -235,18 +198,13 @@ function addRole() {
       };
     });
 
-    // Should return the name field and value will be the name's id. 
-    // console.table(myDeps);
-
     inquirer
       .prompt([
-        //List navigation options
         {
           type: "input",
           name: "title",
           message: "What is the new role's title?"
         },
-
         {
           type: "input",
           name: "salary",
@@ -276,22 +234,6 @@ function addRole() {
 }
 
 function addDepartment() {
-  console.log("Starting function addDepartment");
-  console.log("-------------------------------------");
-  connection.query("SELECT * FROM department", function (err, res) {
-    if (err) throw err;
-    const myDeps = res.map(function (deps) {
-      return { 
-        name: deps.name,
-        value: deps.id 
-      };
-    });
-
-
-
-
-
-
   inquirer
     .prompt([
       //List navigation options
@@ -306,32 +248,22 @@ function addDepartment() {
         "INSERT INTO department SET ?",
         {
           name: data.department
-        }
-      ,
-      function(err, res){
+        },
+       function(err, res){
         if (err) throw err;
         viewAllDepartments();
-        // start();
-      }
+       }
       )
-      
-      
     })
- 
-
-  })
 }
 
 // READ
 // ========================================================
 
 function viewAllEmployees() {
-  console.log("Starting function viewAllEmployees");
-  console.log("-------------------------------------");
   connection.query("SELECT eleft.first_name, eleft.last_name, title, name as department, salary, CONCAT(eright.first_name, ' ', eright.last_name) AS manager FROM employee as eLeft LEFT JOIN role ON eleft.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee eright ON eleft.manager_id = eright.id", function (err, res) {
     if (err) throw err;
     console.table(
-      "",
       "-------------------------------------",
       "All Employees:",
       "-------------------------------------",
@@ -342,12 +274,9 @@ function viewAllEmployees() {
 }
 
 function viewAllRoles() {
-  console.log("Starting function viewAllRoles");
-  console.log("-------------------------------------");
   connection.query("SELECT role.id, title, salary, name as department FROM role LEFT JOIN department ON role.department_id = department.id", function (err, res) {
     if (err) throw err;
     console.table(
-      "",
       "-------------------------------------",
       "All Roles:",
       "-------------------------------------",
@@ -358,12 +287,9 @@ function viewAllRoles() {
 }
 
 function viewAllDepartments() {
-  console.log("Starting function viewAllDepartments");
-  console.log("-------------------------------------");
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
     console.table(
-      "",
       "-------------------------------------",
       "All Departments:",
       "-------------------------------------",
@@ -374,8 +300,6 @@ function viewAllDepartments() {
 }
 
 function viewEmployeeDepartment() {
-  console.log("Starting function viewEmployeeDepartment");
-  console.log("-------------------------------------");
   connection.query("SELECT * FROM department", function (err, res) {
     if (err) throw err;
 
@@ -388,7 +312,6 @@ function viewEmployeeDepartment() {
 
     inquirer
       .prompt([
-        //List current department options
         {
           type: "list",
           name: "department",
@@ -400,7 +323,6 @@ function viewEmployeeDepartment() {
         connection.query("SELECT eleft.first_name, eleft.last_name, title, name as department, salary, CONCAT(eright.first_name, ' ', eright.last_name) AS manager FROM employee as eLeft LEFT JOIN role ON eleft.role_id = role.id LEFT JOIN department ON role.department_id = department.id RIGHT JOIN employee eright ON eleft.manager_id = eright.id WHERE department.id="+data.department+"", function (err, res) {
           if (err) throw err;
           console.table(
-            "",
             "-------------------------------------",
             "All Employees in the " + myDeps[data.department-1].name + " department:",
             "-------------------------------------",
@@ -410,25 +332,12 @@ function viewEmployeeDepartment() {
         });
       })
     })
- 
 }
-
-// function viewEmployeeManager(){
-//   console.log("Create this function")
-//   console.log("-------------------------------------");
-// };
 
 // UPDATE
 // ========================================================
 
-// function updateEmployeeManager(){
-//   console.log("Create this function")
-//   console.log("-------------------------------------");
-// };
-
 function updateEmployeeRole() {
-  console.log("Create this function");
-  console.log("-------------------------------------");
   connection.query("SELECT id,CONCAT(first_name, ' ', last_name) AS emp FROM employee", function(err, res){
     if (err) throw err;
 
@@ -440,7 +349,6 @@ function updateEmployeeRole() {
     })
    inquirer
     .prompt([
-      //List current department options
       {
         type: "list",
         name: "employee",
@@ -448,10 +356,7 @@ function updateEmployeeRole() {
         choices: empUpdate
       }
     ]).then(function(data){
-      console.log(data);
-      // console.log(newEmp);
       const empUpdate = data.employee;
-
       connection.query("SELECT * FROM role", function (err, res) {
         if (err) throw err;
 
@@ -464,7 +369,6 @@ function updateEmployeeRole() {
 
         inquirer
           .prompt([
-            //List current department options
             {
               type: "list",
               name: "roles",
@@ -484,63 +388,10 @@ function updateEmployeeRole() {
         })
     })
   })
-
 }
-// DELETE
-// ========================================================
-
-// function removeEmployee(){
-//   console.log("Create this function")
-//   console.log("-------------------------------------");
-// }
 
 function quit() {
   console.log("Goodbye");
   console.log("-------------------------------------");
   connection.end();
 }
-
-// // From Homework 10: EmployeeSummary:
-// // ============================================================
-// function buildEngineer() {
-//     inquirer
-//       .prompt([
-//         //Name
-//         {
-//           type: "input",
-//           name: "name",
-//           message: `What is your engineer's name?`,
-//         },
-//         //id
-//         {
-//           type: "input",
-//           name: "id",
-//           message: `What is your engineer's id`,
-//         },
-//         //email
-//         {
-//           type: "input",
-//           name: "email",
-//           message: "What is your engineer's email?",
-//         },
-//         //github
-//         {
-//           type: "input",
-//           name: "github",
-//           message: "What is your engineer's github username?",
-//         },
-//       ])
-//       .then(function (data) {
-//         const engineer = new Engineer(
-//           data.name,
-//           data.id,
-//           data.email,
-//           data.github
-//         );
-//         employeeArr.push(engineer);
-//         buildEmployee();
-//       })
-//       .catch(function (err) {
-//         console.log(err);
-//       });
-//   }
