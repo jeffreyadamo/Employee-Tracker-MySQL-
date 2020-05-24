@@ -14,8 +14,6 @@ UW Full Stack BootCamp
 
 * [Usage](#usage)
 
-* [Contributing](#contributing)
-
 * [Tests](#tests)
 
 * [Questions/Contributions](#questions/contributions)
@@ -59,7 +57,7 @@ npm install
 
 Create a new .env file following the .env.sample example and input your personal MySQL password
 
-Use the seed data provided in "EmployeeTrackerSeed.sql" and "employeeTrackerData.sql" to create and populate the "employeeTracker_db" database in MySQL Workbench 8.0
+Use the seed data provided in "EmployeeTrackerSeed.sql" and "employeeTrackerData.sql" to create and populate the "employeeTracker_db" database in MySQL Workbench 8.0.
 
 You are ready to run the application in the command prompt!
 
@@ -86,7 +84,7 @@ Follow the prompts provided in the command line interface:
 
 ## Issues
 
-Future developments to include the following bonus features:
+Future developments would include the following bonus features:
   * Update employee managers
   * View employees by manager
   * Delete departments, roles, and employees
