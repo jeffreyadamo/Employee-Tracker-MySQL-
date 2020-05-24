@@ -26,7 +26,7 @@ UW Full Stack BootCamp
 
 Employee Tracker is a content managament system (CMS) application that uses the command line interface (CLI) to navigate through a MySQL database with employee information. The user has the several CRUD options available through the app (Create, Read, Update, Delete).
 
-<img src="./Assets/demo.gif">  
+<img src="Assets/demo.gif">  
 
 This application features:
 * MySQL database CRUD
